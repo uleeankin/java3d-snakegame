@@ -9,29 +9,14 @@ import javax.vecmath.Point3f;
 import java.awt.*;
 
 
-public class StartPage  extends JPanel {
+public class StartPage {
 
-    public static SimpleUniverse simpleUniverse;
-    public static BranchGroup scene = new BranchGroup();
     public static BranchGroup threeDTitle = new BranchGroup();
 
     public StartPage() {
-        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
-        Canvas3D canvas = new Canvas3D(config);
-        setLayout(new BorderLayout());
-        add(canvas);
 
-        simpleUniverse = new SimpleUniverse(canvas);
-        simpleUniverse.getViewingPlatform().setNominalViewingTransform();
-        scene.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
-        scene.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
-        scene.addChild(getThreeDTitle());
-        //scene.addChild(Snake.getSnakeBodyPart());
-        scene.compile();
-        simpleUniverse.addBranchGraph(scene);
     }
-
-    public BranchGroup getThreeDTitle() {
+    public static BranchGroup getThreeDTitle() {
 
         threeDTitle.setCapability(BranchGroup.ALLOW_DETACH);
         //add start text
