@@ -12,6 +12,7 @@ public class GameField extends JPanel {
     public static JFrame frame = new JFrame("SnakeGame");
     public static SimpleUniverse simpleUniverse;
     public static BranchGroup scene = new BranchGroup();
+    public static Controller controller = new Controller();
     //private Timer timer;
 
     public GameField() {
@@ -26,6 +27,7 @@ public class GameField extends JPanel {
         scene.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
         scene.addChild(StartPage.getThreeDTitle());
         //scene.addChild(Snake.getSnakeBodyPart());
+
         scene.compile();
         simpleUniverse.addBranchGraph(scene);
     }
@@ -35,21 +37,15 @@ public class GameField extends JPanel {
         frame.setLayout(new BorderLayout());
         GameField panel = new GameField();
         frame.add(panel);
+        frame.addKeyListener(controller);
         frame.setSize(SIZE, SIZE);
+        frame.setFocusable(true);
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-
-        /*Thread.sleep(5000);
-        StartPage.threeDTitle.detach();
-
-        StartPage.scene.addChild(Snake.getSnakeBodyPart());*/
-
-
 //ToDo: события нажатия на клавиши (плюс ограничения нельзя в обратную сторону без поворота)
-
     }
+
 
 
 }

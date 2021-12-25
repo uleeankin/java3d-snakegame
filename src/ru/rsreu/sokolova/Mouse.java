@@ -1,0 +1,58 @@
+package ru.rsreu.sokolova;
+
+import com.sun.j3d.utils.geometry.Primitive;
+import com.sun.j3d.utils.geometry.Sphere;
+
+import javax.media.j3d.*;
+import javax.vecmath.Color3f;
+import javax.vecmath.Point3d;
+import javax.vecmath.Vector3f;
+
+public class Mouse {
+
+    private static final float SPHERE_SIZE = 0.05f;
+
+    public static BranchGroup mouse = new BranchGroup();
+
+    public Mouse() {
+
+    }
+
+    public static void getMouse() {
+        mouse.addChild(getMouseTransform());
+        mouse.addChild(getMouseLight());
+    }
+
+    private static TransformGroup getMouseTransform() {
+        TransformGroup transformGroup = new TransformGroup();
+        Transform3D transform3D = new Transform3D();
+        transform3D.setTranslation();
+        transformGroup.setTransform(transform3D);
+        transformGroup.addChild(getSphere());
+    }
+
+    private static DirectionalLight getMouseLight() {
+        Color3f lightColor = new Color3f(1.0f, 1.5f, 1.0f);
+        BoundingSphere bounds = new BoundingSphere(new Point3d(0.0,0.0,0.0), 200.0);
+        Vector3f lightDirection = new Vector3f(-1.0f, -0.5f, -5.0f);
+        DirectionalLight light = new DirectionalLight(lightColor, lightDirection);
+        light.setInfluencingBounds(bounds);
+        return light;
+    }
+
+    private static Node getSphere() {
+        return new Sphere(SPHERE_SIZE, Primitive.GENERATE_NORMALS, 70, getMouseAppearance());
+    }
+
+    private static Appearance getMouseAppearance() {
+        Material surface = new Material();
+        surface.setShininess(10.0f);
+        surface.setEmissiveColor(0.1f, 0.1f, 0.1f);
+        surface.setAmbientColor(0.0f, 0.0f, 0.0f);
+        surface.setDiffuseColor(0.0f, 0.1f, 0.0f);
+        surface.setSpecularColor(0.01f, 0.01f, 0.01f);
+        Appearance appearance = new Appearance();
+        appearance.setMaterial(surface);
+        return appearance;
+    }
+}
