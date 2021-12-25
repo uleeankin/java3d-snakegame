@@ -1,9 +1,6 @@
 package ru.rsreu.sokolova;
 
-import com.sun.j3d.utils.universe.SimpleUniverse;
-
 import javax.media.j3d.*;
-import javax.swing.*;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3f;
 import java.awt.*;
@@ -19,7 +16,6 @@ public class StartPage {
     public static BranchGroup getThreeDTitle() {
 
         threeDTitle.setCapability(BranchGroup.ALLOW_DETACH);
-        //add start text
         Background background = new Background(new Color3f(Color.BLACK));
         background.setApplicationBounds(new BoundingSphere());
         threeDTitle.addChild(background);
