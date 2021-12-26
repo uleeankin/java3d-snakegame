@@ -2,6 +2,7 @@ package ru.rsreu.sokolova.controller;
 
 import ru.rsreu.sokolova.GameField;
 import ru.rsreu.sokolova.Motion;
+import ru.rsreu.sokolova.models.Mouse;
 import ru.rsreu.sokolova.models.Snake;
 
 import javax.swing.*;
@@ -14,7 +15,6 @@ public class ActionController implements ActionListener {
     private static final float MAX_X = 0.945f;
     private static final float MIN_Y = -0.91f;
     private static final float MAX_Y = 0.91f;
-    public static float snakeHeadPosition;
 
     public Timer timer = new Timer(500, this);
 
@@ -24,7 +24,6 @@ public class ActionController implements ActionListener {
         checkBounds();
         //проверка на мышь
         eatMouse();
-        //ToDo: добавить таймер в motion
         //движение змейки
         if (MotionController.isRight) {
             Motion.rightMotion();
@@ -41,6 +40,21 @@ public class ActionController implements ActionListener {
     }
 
     private void eatMouse() {
+        if (isXMouse() && isYMouse()) {
+            Snake.increaseSnake();
+            Mouse.setMouseTranslation();
+            GameField.score++;
+        }
+    }
+
+    private boolean isYMouse() {
+        return (Snake.snakeDots.get(0).getYPosition() - Snake.SPHERE_SIZE <= Mouse.mouse.getYPosition() + Mouse.SPHERE_SIZE + 0.01) &&
+                (Snake.snakeDots.get(0).getYPosition() + Snake.SPHERE_SIZE >= Mouse.mouse.getYPosition() - Mouse.SPHERE_SIZE - 0.01);
+    }
+
+    private boolean isXMouse() {
+        return (Snake.snakeDots.get(0).getXPosition() - Snake.SPHERE_SIZE <= Mouse.mouse.getXPosition() + Mouse.SPHERE_SIZE + 0.01) &&
+                (Snake.snakeDots.get(0).getXPosition() + Snake.SPHERE_SIZE >= Mouse.mouse.getXPosition() - Mouse.SPHERE_SIZE - 0.01);
     }
 
     private void checkBounds() {

@@ -15,6 +15,8 @@ public class GameField extends JPanel {
     public static BranchGroup scene = new BranchGroup();
     public static MotionController controller = new MotionController();
     public static boolean inGame;
+    public static int score = 0;
+    public static int maxScore;
 
     public GameField() {
         GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();

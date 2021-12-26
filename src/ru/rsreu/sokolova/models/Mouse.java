@@ -11,7 +11,7 @@ import java.util.Random;
 
 public class Mouse {
 
-    private static final float SPHERE_SIZE = 0.05f;
+    public static final float SPHERE_SIZE = 0.05f;
     private static final float MIN_X = -0.945f;
     private static final float MAX_X = 0.945f;
     private static final float MIN_Y = -0.91f;
@@ -29,6 +29,17 @@ public class Mouse {
         branchGroup.addChild(getMouseLight());
         mouse.setBranchGroup(branchGroup);
         return branchGroup;
+    }
+
+    public static void setMouseTranslation() {
+        float x = getRandomXPosition();
+        float y = getRandomYPosition();
+        Transform3D transform3D = new Transform3D();
+        Vector3f vector = new Vector3f(x, y, 0f);
+        transform3D.setTranslation(vector);
+        Mouse.mouse.getTransformGroup().setTransform(transform3D);
+        Mouse.mouse.setFirstXPosition(x);
+        Mouse.mouse.setFirstYPosition(y);
     }
 
     private static TransformGroup getMouseTransform() {

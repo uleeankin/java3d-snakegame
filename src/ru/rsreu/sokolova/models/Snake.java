@@ -11,12 +11,14 @@ import javax.vecmath.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.rsreu.sokolova.GameField.scene;
+
 public class Snake {
 
     private static final float TRANSLATION_Z = 0.0f;
     private static final int SNAKE_LENGTH = 3;
     public static final float SPHERE_SIZE = 0.05f;
-    private static final float TRANSLATION_Z_EYE = SPHERE_SIZE * 0.9f;
+    public static final float TRANSLATION_Z_EYE = SPHERE_SIZE * 0.9f;
     private static final float TRANSLATION_Y = 0.0f;
     private static final float TRANSLATION_X_START = SPHERE_SIZE * 3.5f;
     private static final float TRANSLATION_X = SPHERE_SIZE * 1.8f;
@@ -25,8 +27,11 @@ public class Snake {
     private static float xTranslation;
     private static float yTranslation;
     private static float zTranslation;
-    private static GroupHierarchy groupHierarchy = new GroupHierarchy();
-    public static List<GroupHierarchy> snakeDots = new ArrayList<>();
+    private static GroupHierarchy groupHierarchy;
+    public static float lastXPosition;
+    public static float lastYPosition;
+    public static List<GroupHierarchy> snakeDots;
+    public static List<GroupHierarchy> snakeEyes;
 
     private Snake() {
 
@@ -34,6 +39,9 @@ public class Snake {
 
     public static void createSnake() {
         Snake snake = new Snake();
+        groupHierarchy = new GroupHierarchy();
+        snakeDots = new ArrayList<>();
+        snakeEyes = new ArrayList<>();
         snake.getSnakeHead(groupHierarchy);
         snakeDots.add(groupHierarchy);
         for (int i = 1; i < SNAKE_LENGTH; i++) {
@@ -42,6 +50,17 @@ public class Snake {
             snakeDots.add(groupHierarchy);
         }
 
+    }
+
+    public static void increaseSnake() {
+        GroupHierarchy groupHierarchy = new GroupHierarchy();
+        BranchGroup bodyPart = new BranchGroup();
+        bodyPart.addChild(getSnakeBodyLight());
+        bodyPart.addChild(getSnakeBodyTranslation(lastXPosition, lastYPosition, zTranslation, groupHierarchy));
+        groupHierarchy.setBranchGroup(bodyPart);
+        xTranslation -= TRANSLATION_X;
+        snakeDots.add(groupHierarchy);
+        scene.addChild(bodyPart);
     }
 
     private BranchGroup getSnakeHead(GroupHierarchy groupHierarchy) {
@@ -88,15 +107,15 @@ public class Snake {
         Vector3f vector = new Vector3f(x, y, z);
         transform3D.setTranslation(vector);
         transformGroup.setTransform(transform3D);
-        transformGroup.addChild(getSphere());
+        transformGroup.addChild(getSphere(groupHierarchy));
         groupHierarchy.setTransformGroup(transformGroup);
-        groupHierarchy.setXPosition(x);
-        groupHierarchy.setYPosition(y);
+        groupHierarchy.setFirstXPosition(x);
+        groupHierarchy.setFirstYPosition(y);
         return transformGroup;
 
     }
 
-    private static Node getSphere() {
+    private static Node getSphere(GroupHierarchy groupHierarchy) {
         return new Sphere(SPHERE_SIZE, Primitive.GENERATE_NORMALS, 70, getBodyAppearance());
     }
 
@@ -113,9 +132,15 @@ public class Snake {
     }
 
     private static Node getEyes() {
+        GroupHierarchy groupHierarchy = new GroupHierarchy();
         BranchGroup branchGroup = new BranchGroup();
-        branchGroup.addChild(getEyeTranslation(TRANSLATION_X_START - 0.02f, TRANSLATION_Y + 0.01f, TRANSLATION_Z_EYE));
-        branchGroup.addChild(getEyeTranslation(TRANSLATION_X_START + 0.02f, TRANSLATION_Y + 0.01f, TRANSLATION_Z_EYE));
+        branchGroup.addChild(getEyeTranslation(TRANSLATION_X_START - 0.02f, TRANSLATION_Y + 0.01f, TRANSLATION_Z_EYE, groupHierarchy));
+        groupHierarchy.setBranchGroup(branchGroup);
+        snakeEyes.add(groupHierarchy);
+        groupHierarchy = new GroupHierarchy();
+        groupHierarchy.setBranchGroup(branchGroup);
+        branchGroup.addChild(getEyeTranslation(TRANSLATION_X_START + 0.02f, TRANSLATION_Y + 0.01f, TRANSLATION_Z_EYE, groupHierarchy));
+        snakeEyes.add(groupHierarchy);
         branchGroup.addChild(getEyeColour());
         return branchGroup;
     }
@@ -129,13 +154,21 @@ public class Snake {
         return light;
     }
 
-    private static Node getEyeTranslation(float x, float y, float z) {
+    private static Node getEyeTranslation(float x, float y, float z, GroupHierarchy groupHierarchy) {
         TransformGroup transformGroup = new TransformGroup();
+        transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+        transformGroup.setCapability(TransformGroup.ALLOW_CHILDREN_EXTEND);
+        transformGroup.setCapability(TransformGroup.ALLOW_CHILDREN_WRITE);
+        transformGroup.setCapability(TransformGroup.ALLOW_CHILDREN_READ);
         Transform3D transform3D = new Transform3D();
         Vector3f vector = new Vector3f(x, y, z);
         transform3D.setTranslation(vector);
         transformGroup.setTransform(transform3D);
         transformGroup.addChild(getEye());
+        groupHierarchy.setTransformGroup(transformGroup);
+        groupHierarchy.setFirstXPosition(x);
+        groupHierarchy.setFirstYPosition(y);
         return transformGroup;
     }
 
@@ -150,7 +183,7 @@ public class Snake {
 
     private static Appearance getEyeAppearance() {
         Material surface = new Material();
-        surface.setShininess(10.0f);
+        surface.setShininess(5.0f);
         surface.setEmissiveColor(0.1f, 0.1f, 0.1f);
         surface.setAmbientColor(0.0f, 0.0f, 0.0f);
         surface.setDiffuseColor(0.0f, 0.0f, 0.0f);

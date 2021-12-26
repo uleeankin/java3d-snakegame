@@ -36,6 +36,10 @@ public class GroupHierarchy {
         return this.xPosition;
     }
 
+    public void setFirstXPosition(float xPosition) {
+        this.xPosition = xPosition;
+    }
+
     public void setXPosition(float xPosition) {
         Transform3D transform3D = new Transform3D();
         Vector3f vector = new Vector3f(xPosition, this.yPosition, 0f);
@@ -48,6 +52,10 @@ public class GroupHierarchy {
         return this.yPosition;
     }
 
+    public void setFirstYPosition(float yPosition) {
+        this.yPosition = yPosition;
+    }
+
     public void setYPosition(float yPosition) {
         Transform3D transform3D = new Transform3D();
         Vector3f vector = new Vector3f(this.xPosition, yPosition, 0f);
@@ -56,5 +64,10 @@ public class GroupHierarchy {
         this.yPosition = yPosition;
     }
 
-
+    public void setZPosition() {
+        Transform3D transform3D = new Transform3D();
+        Vector3f vector = new Vector3f(this.xPosition, this.yPosition, Snake.TRANSLATION_Z_EYE);
+        transform3D.setTranslation(vector);
+        this.transformGroup.setTransform(transform3D);
+    }
 }
