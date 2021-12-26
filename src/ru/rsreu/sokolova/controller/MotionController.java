@@ -1,15 +1,15 @@
 package ru.rsreu.sokolova.controller;
 
 import ru.rsreu.sokolova.GameField;
-import ru.rsreu.sokolova.Motion;
-import ru.rsreu.sokolova.StartPage;
+import ru.rsreu.sokolova.Page;
 import ru.rsreu.sokolova.models.Mouse;
 import ru.rsreu.sokolova.models.Snake;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
 
-import static ru.rsreu.sokolova.GameField.scene;
+import static ru.rsreu.sokolova.GameField.*;
 
 public class MotionController implements KeyListener {
 
@@ -17,7 +17,9 @@ public class MotionController implements KeyListener {
     public static boolean isRight;
     public static boolean isUp;
     public static boolean isDown;
+
     private static boolean isWorkedTimer = false;
+    private static boolean isNewGame = true;
 
     public MotionController() {
 
@@ -32,7 +34,13 @@ public class MotionController implements KeyListener {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_ENTER:
                 if (!GameField.inGame) {
-                    StartPage.threeDTitle.detach();
+                    if (isNewGame) {
+                        Page.startGameTitle.detach();
+                        isNewGame = false;
+                    } else {
+                        Page.endGameTitle.detach();
+                    }
+                    score = 0;
                     Snake.createSnake();
                     for (int i = 0; i < Snake.snakeDots.size(); i++) {
                         scene.addChild(Snake.snakeDots.get(i).getBranchGroup());
@@ -69,6 +77,11 @@ public class MotionController implements KeyListener {
                 isDown = false;
                 isUp = false;
                 break;
+            case KeyEvent.VK_ESCAPE:
+                if (!inGame) {
+                    GameField.frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));;
+                }
+                break;
         }
     }
 
@@ -83,5 +96,9 @@ public class MotionController implements KeyListener {
             actionController.timer.start();
             isWorkedTimer = true;
         }
+    }
+
+    public static void stopTimer() {
+        MotionController.isWorkedTimer = false;
     }
 }

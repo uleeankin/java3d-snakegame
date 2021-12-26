@@ -25,6 +25,7 @@ public class Mouse {
 
     public static BranchGroup getMouse() {
         BranchGroup branchGroup = new BranchGroup();
+        branchGroup.setCapability(BranchGroup.ALLOW_DETACH);
         branchGroup.addChild(getMouseTransform());
         branchGroup.addChild(getMouseLight());
         mouse.setBranchGroup(branchGroup);

@@ -55,6 +55,7 @@ public class Snake {
     public static void increaseSnake() {
         GroupHierarchy groupHierarchy = new GroupHierarchy();
         BranchGroup bodyPart = new BranchGroup();
+        bodyPart.setCapability(BranchGroup.ALLOW_DETACH);
         bodyPart.addChild(getSnakeBodyLight());
         bodyPart.addChild(getSnakeBodyTranslation(lastXPosition, lastYPosition, zTranslation, groupHierarchy));
         groupHierarchy.setBranchGroup(bodyPart);
@@ -65,6 +66,7 @@ public class Snake {
 
     private BranchGroup getSnakeHead(GroupHierarchy groupHierarchy) {
         BranchGroup snakeHead = new BranchGroup();
+        snakeHead.setCapability(BranchGroup.ALLOW_DETACH);
         yTranslation = TRANSLATION_Y;
         zTranslation = TRANSLATION_Z;
         xTranslation = TRANSLATION_X_START;
@@ -80,6 +82,7 @@ public class Snake {
 
     public BranchGroup getSnakeBodyPart(GroupHierarchy groupHierarchy) {
         BranchGroup bodyPart = new BranchGroup();
+        bodyPart.setCapability(BranchGroup.ALLOW_DETACH);
         bodyPart.addChild(getSnakeBodyLight());
         bodyPart.addChild(getSnakeBodyTranslation(xTranslation, yTranslation, zTranslation, groupHierarchy));
         groupHierarchy.setBranchGroup(bodyPart);

@@ -2,12 +2,15 @@ package ru.rsreu.sokolova.controller;
 
 import ru.rsreu.sokolova.GameField;
 import ru.rsreu.sokolova.Motion;
+import ru.rsreu.sokolova.Page;
 import ru.rsreu.sokolova.models.Mouse;
 import ru.rsreu.sokolova.models.Snake;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import static ru.rsreu.sokolova.GameField.scene;
 
 public class ActionController implements ActionListener {
 
@@ -20,6 +23,8 @@ public class ActionController implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        //проверка на столкновение змеи самой с собой
+        checkCollision();
         //проверка на столкновение с границами
         checkBounds();
         //проверка на мышь
@@ -39,6 +44,29 @@ public class ActionController implements ActionListener {
         }
     }
 
+    private void checkCollision() {
+        for (int i = 1; i < Snake.snakeDots.size(); i++) {
+            if (isYCollision(Snake.snakeDots.get(i).getYPosition()) &&
+                    isXCollision(Snake.snakeDots.get(i).getXPosition())) {
+                stopGame();
+            }
+        }
+    }
+
+    private boolean isYCollision(float y) {
+        if (Snake.snakeDots.get(0).getYPosition() < y) {
+            return (Snake.snakeDots.get(0).getYPosition() + Snake.SPHERE_SIZE >= y - 0.035);
+        }
+        return (Snake.snakeDots.get(0).getYPosition() - Snake.SPHERE_SIZE <= y + 0.035);
+    }
+
+    private boolean isXCollision(float x) {
+        if (Snake.snakeDots.get(0).getXPosition() < x) {
+            return (Snake.snakeDots.get(0).getXPosition() + Snake.SPHERE_SIZE >= x - 0.035);
+        }
+        return (Snake.snakeDots.get(0).getXPosition() - Snake.SPHERE_SIZE <= x + 0.035);
+    }
+
     private void eatMouse() {
         if (isXMouse() && isYMouse()) {
             Snake.increaseSnake();
@@ -48,13 +76,13 @@ public class ActionController implements ActionListener {
     }
 
     private boolean isYMouse() {
-        return (Snake.snakeDots.get(0).getYPosition() - Snake.SPHERE_SIZE <= Mouse.mouse.getYPosition() + Mouse.SPHERE_SIZE + 0.01) &&
-                (Snake.snakeDots.get(0).getYPosition() + Snake.SPHERE_SIZE >= Mouse.mouse.getYPosition() - Mouse.SPHERE_SIZE - 0.01);
+        return (Snake.snakeDots.get(0).getYPosition() - Snake.SPHERE_SIZE <= Mouse.mouse.getYPosition() + 0.04) &&
+                (Snake.snakeDots.get(0).getYPosition() + Snake.SPHERE_SIZE >= Mouse.mouse.getYPosition() - 0.04);
     }
 
     private boolean isXMouse() {
-        return (Snake.snakeDots.get(0).getXPosition() - Snake.SPHERE_SIZE <= Mouse.mouse.getXPosition() + Mouse.SPHERE_SIZE + 0.01) &&
-                (Snake.snakeDots.get(0).getXPosition() + Snake.SPHERE_SIZE >= Mouse.mouse.getXPosition() - Mouse.SPHERE_SIZE - 0.01);
+        return (Snake.snakeDots.get(0).getXPosition() - Snake.SPHERE_SIZE <= Mouse.mouse.getXPosition() + 0.04) &&
+                (Snake.snakeDots.get(0).getXPosition() + Snake.SPHERE_SIZE >= Mouse.mouse.getXPosition() - 0.04);
     }
 
     private void checkBounds() {
@@ -64,11 +92,28 @@ public class ActionController implements ActionListener {
                     Snake.snakeDots.get(i).getYPosition() + Snake.SPHERE_SIZE >= MAX_Y ||
                     Snake.snakeDots.get(i).getYPosition() + Snake.SPHERE_SIZE <= MIN_Y) {
 
-                GameField.inGame = false;
-                this.timer.stop();
-                //вывести текст с баллами
-                //перезапуск и выход
+                stopGame();
             }
         }
+    }
+
+    private void stopGame() {
+        GameField.inGame = false;
+        this.timer.stop();
+        MotionController.stopTimer();
+        if (GameField.score >= GameField.maxScore) {
+            GameField.maxScore = GameField.score;
+        }
+        clearField();
+        scene.addChild(Page.getEndGameTitle());
+    }
+
+    private void clearField() {
+        for (int i = 0; i < Snake.snakeDots.size(); i++) {
+            Snake.snakeDots.get(i).getBranchGroup().detach();
+        }
+        Snake.snakeEyes.get(0).getBranchGroup().detach();
+        Snake.snakeEyes.get(1).getBranchGroup().detach();
+        Mouse.mouse.getBranchGroup().detach();
     }
 }

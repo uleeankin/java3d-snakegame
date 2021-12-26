@@ -16,7 +16,7 @@ public class GameField extends JPanel {
     public static MotionController controller = new MotionController();
     public static boolean inGame;
     public static int score = 0;
-    public static int maxScore;
+    public static int maxScore = 0;
 
     public GameField() {
         GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
@@ -27,7 +27,7 @@ public class GameField extends JPanel {
         simpleUniverse.getViewingPlatform().setNominalViewingTransform();
         scene.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
         scene.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
-        scene.addChild(StartPage.getThreeDTitle());
+        scene.addChild(Page.getStartGameTitle());
         scene.compile();
         simpleUniverse.addBranchGraph(scene);
     }

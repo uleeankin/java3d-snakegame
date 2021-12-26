@@ -6,19 +6,47 @@ import javax.vecmath.Point3f;
 import java.awt.*;
 
 
-public class StartPage {
+public class Page {
 
-    public static BranchGroup threeDTitle = new BranchGroup();
+    public static BranchGroup startGameTitle;
+    public static BranchGroup endGameTitle;
 
-    public StartPage() {
+    public Page() {
 
     }
-    public static BranchGroup getThreeDTitle() {
 
-        threeDTitle.setCapability(BranchGroup.ALLOW_DETACH);
+    public static BranchGroup getEndGameTitle() {
+        endGameTitle = new BranchGroup();
+        endGameTitle.setCapability(BranchGroup.ALLOW_DETACH);
         Background background = new Background(new Color3f(Color.BLACK));
         background.setApplicationBounds(new BoundingSphere());
-        threeDTitle.addChild(background);
+        endGameTitle.addChild(background);
+
+        Shape3D scoreText = getText("Your score: " + GameField.score, new Point3f(0f, 0f, 0f), Color.WHITE);
+
+        Shape3D maxScoreText = getText("Maximum score: " + GameField.maxScore, new Point3f(0f, -1.5f, 0f), Color.WHITE);
+
+        Shape3D nextText = getText("Press ENTER for continue or ESC to exit...", new Point3f(0f, -15.0f, 0f), Color.WHITE);
+
+
+        Transform3D transformWhite = new Transform3D();
+        transformWhite.setScale(0.05f);
+        TransformGroup scaleTransform = new TransformGroup(transformWhite);
+        scaleTransform.addChild(scoreText);
+        scaleTransform.addChild(maxScoreText);
+        scaleTransform.addChild(nextText);
+
+        endGameTitle.addChild(scaleTransform);
+
+        return endGameTitle;
+    }
+
+    public static BranchGroup getStartGameTitle() {
+        startGameTitle = new BranchGroup();
+        startGameTitle.setCapability(BranchGroup.ALLOW_DETACH);
+        Background background = new Background(new Color3f(Color.BLACK));
+        background.setApplicationBounds(new BoundingSphere());
+        startGameTitle.addChild(background);
 
         Shape3D snakeText = getText("SNAKE", new Point3f(0f, 0f, 0f), Color.GREEN);
 
@@ -47,11 +75,11 @@ public class StartPage {
         rotationInterpolator.setSchedulingBounds(new BoundingSphere());
 
         rotateGroup.addChild(scaleRotateTransform);
-        threeDTitle.addChild(scaleTransform);
-        threeDTitle.addChild(rotateGroup);
-        threeDTitle.addChild(rotationInterpolator);
+        startGameTitle.addChild(scaleTransform);
+        startGameTitle.addChild(rotateGroup);
+        startGameTitle.addChild(rotationInterpolator);
 
-        return threeDTitle;
+        return startGameTitle;
     }
 
     private static Shape3D getText(String text, Point3f point, Color color) {
